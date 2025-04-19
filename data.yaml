@@ -1,0 +1,6 @@
+train: C:/klasss/archive/newts/train/images
+val: C:/klasss/archive/newts/val/images
+
+names:
+  0: Karelin_newt
+  1: newt_ribbed
