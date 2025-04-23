@@ -4,3 +4,5 @@ val: C:/klasss/archive/newts/val/images
 names:
   0: Karelin_newt
   1: newt_ribbed
+
+task: segment
