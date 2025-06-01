@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/klasss/archive/OneOME_newts/runs/mlflow/603923395332083467/85b1715a08df4e428421586ac4df86ec/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '603923395332083467'
+lifecycle_stage: active
+run_id: 85b1715a08df4e428421586ac4df86ec
+run_name: keypoint_middle_line
+run_uuid: 85b1715a08df4e428421586ac4df86ec
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748699698454
+status: 1
+tags: []
+user_id: Ucer

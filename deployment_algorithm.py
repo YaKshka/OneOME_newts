@@ -117,7 +117,7 @@ def unwrap_belly_trimmed_ends(image, mask, save_path="unwrapped.png", debug_path
 
 # Пути
 image_path = "C:/klasss/archive/Тритон_ID/Тритон_Карелина/03.12.2024/28/IMG_9461.JPG"
-model_path = "C:/klasss/archive/OneOME_newts/yolo11_seg_training/weights/best.pt"
+model_path = "C:/klasss/archive/newts/final_segmentation/yolo11s_seg_final/weights/best.pt"
 output_path = "C:/klasss/archive/OneOME_newts/unwrapped_output.jpg"
 debug_path = "C:/klasss/archive/OneOME_newts/debug_centerline.jpg"
 
