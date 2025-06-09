@@ -211,9 +211,52 @@ def test_triplet_model(model, test_loader, device, margin=1.0):
     }
 
 
-# ======= Остальной код для загрузки данных, тренировок и тестов =======
+# ===========================
+# Обучение модели с Triplet Loss
+# ===========================
 
-# Загрузки данных, трансформации, DataLoader — оставляем как есть
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+model = TripletNet().to(device)
+optimizer = optim.Adam(model.parameters(), lr=1e-4)
+criterion = nn.TripletMarginLoss(margin=1.0, p=2)
+
+num_epochs = 10
+
+for epoch in range(num_epochs):
+    model.train()
+    total_loss = 0.0
+    print(f"\n=== Эпоха {epoch}/{num_epochs} ===")
+    for batch in train_loader:
+        anchor_imgs, pos_imgs, neg_imgs = batch
+        anchor_imgs = anchor_imgs.to(device)
+        pos_imgs = pos_imgs.to(device)
+        neg_imgs = neg_imgs.to(device)
+
+        optimizer.zero_grad()
+
+        embed_anchor = model(anchor_imgs)
+        embed_positive = model(pos_imgs)
+        embed_negative = model(neg_imgs)
+
+        loss = criterion(embed_anchor, embed_positive, embed_negative)
+
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+
+    avg_loss = total_loss / len(train_loader)
+    print(f"Epoch [{epoch + 1}/{num_epochs}] Loss: {avg_loss:.4f}")
+
+print("Обучение завершено.")
+torch.save(model.state_dict(), 'vit_model.pth')
+print("Модель сохранена как 'vit_model.pth'")
+
+
+# ======= Тестирование  =======
 
 # Пример вызова теста:
 
@@ -230,7 +273,7 @@ model = TripletNet().to(device)
 model.load_state_dict(torch.load("C:/klasss/archive/newts/model_final/vit_model.pth", map_location=device))
 model.eval()
 
-# Вызов твоей функции теста, которую ты написал (триплетные метрики с loss)
+# Вызов твоей функции теста (триплетные метрики с loss)
 test_metrics = test_triplet_model(model, test_loader, device, margin=1.0)
 
 # Новые метрики (accuracy, precision, recall для триплетов)
@@ -253,45 +296,3 @@ print(f"Recall: {triplet_classification_metrics['recall']:.4f}")
 
 print("\n=== Image Retrieval Metrics ===")
 print(f"Recall@5: {image_retrieval_metrics['recall_at_5']:.4f}")
-
-
-
-
-
-
-
-
-
-'''
-model = TripletNet().to(device)
-model.load_state_dict(torch.load("C:/klasss/archive/newts/model_final/vit_model.pth", map_location=device))
-model.eval()
-
-correct_cls_total = 0
-total_samples = 0
-
-predictions = []
-
-with torch.no_grad():
-    for images, class_id, individual_id in test_loader:
-        images = images.to(device)
-        labels = class_id.to(device)
-
-        outputs = model(images)
-        _, preds = torch.max(outputs, 1)
-
-        # Подсчет точности по классам
-        correct_cls_total += (preds == labels).sum().item()
-        total_samples += labels.size(0)
-
-        # Сохраняем предсказания и person_id для анализа
-        for pred, true_label, pid in zip(preds.cpu().numpy(), class_id.cpu().numpy(), individual_id):
-            predictions.append({
-                'person_id': pid,
-                'predicted_class': pred,
-                'true_class': true_label
-            })
-
-accuracy = correct_cls_total / total_samples * 100
-print(f'Accuracy по классам: {accuracy:.2f}%')
-'''
