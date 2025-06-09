@@ -1,6 +1,6 @@
 # Пути к данным (на примере вашей структуры)
-train: newts/train/images  # Путь к тренировочным изображениям
-val: newts/val/images      # Путь к валидационным изображениям
+train: C:/klasss/archive/OneOME_newts/model_training/datasets/newts/train/images  # Путь к тренировочным изображениям
+val: C:/klasss/archive/OneOME_newts/model_training/datasets/newts/val/images      # Путь к валидационным изображениям
 
 # Количество классов (у вас 1, так как все аннотации содержат только класс 0)
 nc: 1
