@@ -92,6 +92,25 @@ def unwrap_belly_trimmed_ends(image, mask, pt1=None, pt2=None, save_path="unwrap
     lines = []
     max_strip_width = 0
 
+    # Найдём допустимые индексы по маске (внутри маски)
+    valid_indices = []
+    for i in range(len(centerline_smooth)):
+        cx, cy = map(int, centerline_smooth[i])
+        if 0 <= cx < w_img and 0 <= cy < h_img and mask[cy, cx] != 0:
+            valid_indices.append(i)
+
+    # Если есть допустимые точки — обрезаем линию
+    if valid_indices:
+        start = valid_indices[0]
+        end = valid_indices[-1] + 1  # +1, чтобы включить последнюю
+        centerline_smooth = centerline_smooth[start:end]
+        normals = normals[start:end]
+        final_size = len(centerline_smooth)
+    else:
+        # Нет ни одной точки внутри маски — можно прервать
+        print("Вся центральная линия вне маски!")
+        return
+
     for i in range(final_size):
         cx, cy = centerline_smooth[i]
         nx, ny = normals[i]
@@ -140,7 +159,7 @@ def unwrap_belly_trimmed_ends(image, mask, pt1=None, pt2=None, save_path="unwrap
     cv2.imwrite(save_path, final_resized, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
 
 
-    '''
+    """
     # Debug визуализация
     debug_img = image.copy()
 
@@ -160,10 +179,17 @@ def unwrap_belly_trimmed_ends(image, mask, pt1=None, pt2=None, save_path="unwrap
         p1 = (int(cx - nx * 20), int(cy - ny * 20))
         p2 = (int(cx + nx * 20), int(cy + ny * 20))
         cv2.line(debug_img, p1, p2, (255, 0, 255), 1)  # Фиолетовые линии
+        # Отрисовка ключевых точек, если они заданы
+
+    if pt1 is not None and pt2 is not None:
+        cv2.circle(debug_img, pt1, 10, (0, 0, 255), -1)  # Красная жирная точка
+        cv2.circle(debug_img, pt2, 10, (0, 0, 255), -1)  # Красная жирная точка
+    else:
+        print("⚠️ Ключевые точки не заданы — красные точки не будут отображены.")
 
     # Сохраняем debug
     cv2.imwrite(debug_path, debug_img)
-    '''
+    """
 
     print("✅ Готово: развёртка сохранена.")
 
@@ -224,15 +250,15 @@ if __name__ == "__main__":
         unwrap_belly_trimmed_ends(image, mask, None, None, save_unwrap_path, save_debug_path)
 '''
 # ⚙️ Параметры
-input_dir = r"C:/klasss/archive/newts/model_final/images"
-output_dir = r"C:/klasss/archive/newts/model_final/finish"
+input_dir = r"C:/klasss/archive/TEST"
+output_dir = r"C:/klasss/archive/debug"
 os.makedirs(output_dir, exist_ok=True)
 
-seg_model_path = r"C:/klasss/archive/newts/final_segmentation/yolo11s_seg_final/weights/best.pt"
-keypoint_model_path = r"C:/klasss/archive/OneOME_newts/lizard_belly_keypoints23/weights/best.pt"
+seg_model_path = r"C:/klasss/archive/OneOME_newts/yolo11s_seg_last/weights/best.pt"
+keypoint_model_path = r"C:/klasss/archive/newts/keypoints_dop/lizard_keypoints_stage7/weights/best.pt"
 
 # 📦 Загрузка моделей
-seg_model = YOLO(seg_model_path)
+seg_model = YOLO(seg_model_path) 
 keypoint_model = YOLO(keypoint_model_path)
 
 
@@ -285,9 +311,10 @@ for file_name in tqdm(os.listdir(input_dir)):
         pt1, pt2 = get_keypoints_from_model(img_path)
 
         save_path = os.path.join(output_dir, file_name)
+        debug_path = os.path.join(output_dir, f"debug_{file_name}")
 
         try:
-            unwrap_belly_trimmed_ends(image, mask, pt1, pt2, save_path)
+            unwrap_belly_trimmed_ends(image, mask, pt1, pt2, save_path, debug_path)
         except Exception as unwrap_error:
             print(f"⚠️ Ошибка unwrap для {file_name}: {unwrap_error}")
             continue
