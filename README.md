@@ -26,7 +26,7 @@
 
 
 ### Инструкция по разворачиванию моделей
-1. Необходимо скачать параметры всех моделей : model_keypoints/lizard_keypoints_stage_final/best , yolo11s_seg_last/best, по ссылке из гугл диска best_model
+1. Необходимо скачать параметры всех моделей : model_keypoints/lizard_keypoints_stage_final/weight/best , yolo11s_seg_last/weight/best, по ссылке из гугл диска best_model
 2. Запустить файл deployment_yolo.py (Необходимо изменить пути к файлам)
 3. С помощью скрипта train_model_vit/make_csv.py создать лейблы для следующей модели
 4. Запустить файл deployment_vit.py (изменить пути к файлам)
