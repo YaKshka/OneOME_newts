@@ -1,0 +1,8 @@
+train: C:/klasss/archive/newts/model_keypoints/train/images
+val: C:/klasss/archive/newts/model_keypoints/val/images
+
+names:
+  0: Karelin_newt
+  1: newt_ribbed
+
+kpt_shape: [32, 3]  # 32 ключевые точки, каждая имеет (x, y)
