@@ -4,9 +4,9 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Cal
 import os
 from model import photo_processing
 
-API_TOKEN = '7810246805:AAFUhEJL92DGNuDUBPPgro2kHPmnPv2tShY'
-save_dir = '/home/yakshka/prod2/get_photo'
-result_dir = '/home/yakshka/prod2/send_photo'
+API_TOKEN = 'ваш токен'
+save_dir = 'ваш путь до папки сохранения'
+result_dir = 'ваш путь до папки отправления'
 
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text('Данный бот создан для демонстрации возможностей модели.'
